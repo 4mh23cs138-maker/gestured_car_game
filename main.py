@@ -3,6 +3,8 @@ import pygame
 import sys
 from hand_tracking import HandDetector
 from game_engine import Game, WIDTH, HEIGHT
+from database import init_db
+from ui import run_login_flow
 
 def main():
     # Initialize Pygame
@@ -11,7 +13,15 @@ def main():
     pygame.display.set_caption("Gesture Racing")
     clock = pygame.time.Clock()
     
-    game = Game(screen)
+    # Init DB
+    init_db()
+    
+    # Run Login Flow
+    username = run_login_flow(screen, clock)
+    if not username:
+        username = "Guest"
+        
+    game = Game(screen, username)
     
     # Initialize OpenCV Video Capture - Probing multiple indices
     cap = None

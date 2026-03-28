@@ -2,6 +2,7 @@ import pygame
 import random
 import time
 import math
+from database import save_score, get_top_scores
 
 pygame.font.init()
 
@@ -76,10 +77,14 @@ class Particle:
         self.initial_life = life
 
 class Game:
-    def __init__(self, surface):
+    def __init__(self, surface, username="Guest"):
         self.surface = surface
         self.width = WIDTH
         self.height = HEIGHT
+        self.username = username
+        self.score_submitted = False
+        self.top_scores = []
+        
         
         # Road layout
         self.road_w = int(self.width * 0.70)
@@ -116,7 +121,7 @@ class Game:
                       self.road_x + lane_w * 2.5 - self.car_width / 2]
                       
     def reset(self):
-        self.__init__(self.surface)
+        self.__init__(self.surface, self.username)
 
     def handle_input(self, gesture, hand_x_normalized):
         if self.game_over:
@@ -236,6 +241,10 @@ class Game:
             if car_rect.colliderect(obs_rect):
                 self.game_over = True
                 self._spawn_explosion(self.car_x + self.car_width/2, self.car_y + 20)
+                if not self.score_submitted:
+                    save_score(self.username, int(self.score * 10))
+                    self.top_scores = get_top_scores(5)
+                    self.score_submitted = True
                 
     def draw(self):
         # Background Grass
@@ -294,12 +303,46 @@ class Game:
         if self.game_over:
             # Cinematic Dark Overlay
             overlay = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-            overlay.fill((0, 0, 0, 180))
+            overlay.fill((0, 0, 0, 200)) # Darker for better contrast
             self.surface.blit(overlay, (0, 0))
             
             # Crash Text
-            over_text = FONT_LG.render("CRASHED!", True, (255, 50, 50))
-            restart_text = FONT_MD.render("Open Palm to Restart", True, TEXT_COLOR)
+            over_text = FONT_LG.render("CRASHED!", True, (255, 60, 60))
+            restart_text = FONT_SM.render("Open Palm to Restart", True, (200, 200, 200))
             
-            self.surface.blit(over_text, (self.width // 2 - over_text.get_width() // 2, self.height // 2 - 60))
-            self.surface.blit(restart_text, (self.width // 2 - restart_text.get_width() // 2, self.height // 2 + 20))
+            self.surface.blit(over_text, (self.width // 2 - over_text.get_width() // 2, self.height // 2 - 190))
+            self.surface.blit(restart_text, (self.width // 2 - restart_text.get_width() // 2, self.height // 2 - 130))
+            
+            # Leaderboard Backing Panel
+            panel_w, panel_h = 320, 240
+            panel_x, panel_y = self.width // 2 - panel_w // 2, self.height // 2 - 80
+            pygame.draw.rect(self.surface, (30, 32, 38, 230), (panel_x, panel_y, panel_w, panel_h), border_radius=15)
+            pygame.draw.rect(self.surface, (100, 149, 237), (panel_x, panel_y, panel_w, panel_h), width=2, border_radius=15)
+            
+            # Leaderboard Title
+            lb_title = FONT_MD.render("GLOBAL LEADERBOARD", True, (240, 240, 240))
+            self.surface.blit(lb_title, (self.width // 2 - lb_title.get_width() // 2, panel_y + 15))
+            
+            # Separator Line
+            pygame.draw.line(self.surface, (100, 149, 237, 150), (panel_x + 20, panel_y + 55), (panel_x + panel_w - 20, panel_y + 55), 2)
+            
+            # Scores
+            y_offset = panel_y + 70
+            for i, (uname, max_score) in enumerate(self.top_scores):
+                # Rank
+                color = (255, 215, 0) if i == 0 else (192, 192, 192) if i == 1 else (205, 127, 50) if i == 2 else (180, 180, 180)
+                rank_str = f"#{i+1}"
+                rank_surf = FONT_SM.render(rank_str, True, color)
+                
+                # Username
+                font_color = (255, 255, 255) if uname == self.username else (200, 200, 200)
+                name_surf = FONT_SM.render(uname, True, font_color)
+                
+                # Score
+                score_surf = FONT_SM.render(str(max_score), True, font_color)
+                
+                self.surface.blit(rank_surf, (panel_x + 30, y_offset))
+                self.surface.blit(name_surf, (panel_x + 70, y_offset))
+                self.surface.blit(score_surf, (panel_x + panel_w - 30 - score_surf.get_width(), y_offset))
+                
+                y_offset += 32
