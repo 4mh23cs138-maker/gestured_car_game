@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture Racing - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <span class="icon">🏎️</span>
+                <h1>Gesture Racing</h1>
+            </div>
+            <nav>
+                <span style="color: var(--accent-hover); font-weight:600;">👤 {{ username }}</span>
+                <a href="/logout">Logout</a>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <span class="badge">✨ Welcome back, {{ username }}</span>
+                <h2>Ready to<br><span class="highlight">Race?</span></h2>
+                <p>Launch the game from your desktop by running <code style="background:rgba(99,102,241,0.2); padding:3px 8px; border-radius:6px; color:#a5b4fc;">python main.py</code>. Use hand gestures to steer, accelerate, and brake.</p>
+                <button class="primary-btn" id="launchBtn" onclick="showLaunchInfo()">
+                    🚀 How to Play
+                </button>
+            </div>
+
+            <div class="hero-visual">
+                <div class="glass-card instruction-card">
+                    <h3>Controls</h3>
+                    <ul>
+                        <li>✋ <strong>Open Palm</strong> — Accelerate</li>
+                        <li>✊ <strong>Closed Fist</strong> — Brake</li>
+                        <li>👈 <strong>Move Left</strong> — Steer Left</li>
+                        <li>👉 <strong>Move Right</strong> — Steer Right</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section class="leaderboard-section">
+            <h2>🏆 <span class="highlight">Leaderboard</span></h2>
+            <div class="glass-card table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th style="text-align:right;">High Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scoreBody">
+                        {% if scores %}
+                            {% for score in scores %}
+                            <tr>
+                                <td class="{% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% elif loop.index == 3 %}rank-3{% endif %}">
+                                    {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}#{{ loop.index }}{% endif %}
+                                </td>
+                                <td class="user-cell">{{ score[0] }}</td>
+                                <td class="score-cell">{{ score[1] }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3" style="text-align:center; color: var(--text-dim); padding:40px;">
+                                    No scores yet. Be the first to play! 🎮
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer>
+            <p>Gesture Racing &copy; 2026 — Built with Python, OpenCV & MediaPipe</p>
+        </footer>
+    </div>
+
+    <!-- Launch Info Modal -->
+    <div id="launchModal" style="display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+        <div class="glass-card" style="max-width:520px; margin:auto; margin-top:15vh; text-align:center;">
+            <h3 style="font-size:1.6rem; margin-bottom:15px;">🎮 Launch the Game</h3>
+            <p style="color:var(--text-dim); line-height:1.8; margin-bottom:20px;">
+                Open a terminal in the project folder and run:
+            </p>
+            <code style="display:block; background:rgba(0,0,0,0.4); padding:16px; border-radius:12px; font-size:1.1rem; color:#a5b4fc; margin-bottom:25px; letter-spacing:0.5px;">
+                python main.py
+            </code>
+            <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:25px;">
+                Make sure your webcam is connected and not in use by another app.
+            </p>
+            <button class="primary-btn" onclick="closeLaunchInfo()" style="padding:14px 35px; font-size:1rem;">Got it!</button>
+        </div>
+    </div>
+
+    <script>
+        function showLaunchInfo() {
+            const modal = document.getElementById('launchModal');
+            modal.style.display = 'flex';
+        }
+        function closeLaunchInfo() {
+            document.getElementById('launchModal').style.display = 'none';
+        }
+        // Close modal on outside click
+        document.getElementById('launchModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLaunchInfo();
+        });
+    </script>
+</body>
+</html>

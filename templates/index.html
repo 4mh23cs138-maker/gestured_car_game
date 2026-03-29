@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture Racing - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f111a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --error: #f87171;
+            --success: #34d399;
+            --glass-border: rgba(255,255,255,0.08);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            opacity: 0.4;
+            animation: blobFloat 18s infinite ease-in-out alternate;
+        }
+        .blob-1 { width:500px; height:500px; background:#6366f1; top:-150px; left:-100px; }
+        .blob-2 { width:400px; height:400px; background:#ec4899; bottom:-100px; right:-80px; animation-delay:-9s; }
+        .blob-3 { width:300px; height:300px; background:#06b6d4; top:50%; left:60%; animation-delay:-5s; }
+        @keyframes blobFloat {
+            0% { transform: translate(0,0) scale(1); }
+            100% { transform: translate(60px,40px) scale(1.15); }
+        }
+
+        .login-container {
+            position: relative; z-index: 1;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 50px 45px;
+            width: 420px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        }
+
+        .login-container .logo {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .login-container .logo span { font-size: 3rem; }
+        .login-container h1 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        .login-container .subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-bottom: 35px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(15,17,26,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+        .form-group input::placeholder { color: #475569; }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: translateY(1px); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(99,102,241,0.35);
+        }
+        .btn-primary:hover { box-shadow: 0 12px 35px rgba(99,102,241,0.5); }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.06);
+            color: var(--text-dim);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+        .message {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 0.9rem;
+            min-height: 22px;
+            transition: color 0.3s;
+        }
+        .message.error { color: var(--error); }
+        .message.success { color: var(--success); }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid var(--glass-border);
+        }
+        .feature {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+        .feature span { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="login-container">
+        <div class="logo"><span>🏎️</span></div>
+        <h1>Gesture Racing</h1>
+        <p class="subtitle">Drive using your hands. No controller needed.</p>
+
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="username" placeholder="Enter your username" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="doLogin()">Login</button>
+            <button class="btn btn-secondary" onclick="doRegister()">Register</button>
+        </div>
+
+        <p class="message" id="msg"></p>
+
+        <div class="features">
+            <div class="feature"><span>✋</span>Gesture Control</div>
+            <div class="feature"><span>📸</span>Webcam</div>
+            <div class="feature"><span>🏆</span>Leaderboard</div>
+        </div>
+    </div>
+
+    <script>
+        const msgEl = document.getElementById('msg');
+        
+        async function doLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            if (!username || !password) { showMsg('Please fill in all fields', 'error'); return; }
+            
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            });
+            const data = await res.json();
+            if (data.success) {
+                showMsg('Login successful! Redirecting...', 'success');
+                setTimeout(() => window.location.href = '/game', 600);
+            } else { showMsg(data.message, 'error'); }
+        }
+
+        async function doRegister() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            if (!username || !password) { showMsg('Please fill in all fields', 'error'); return; }
+            
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            });
+            const data = await res.json();
+            if (data.success) {
+                showMsg('Registered! Redirecting...', 'success');
+                setTimeout(() => window.location.href = '/game', 600);
+            } else { showMsg(data.message, 'error'); }
+        }
+
+        function showMsg(text, type) {
+            msgEl.textContent = text;
+            msgEl.className = 'message ' + type;
+        }
+
+        // Enter key submits login
+        document.getElementById('password').addEventListener('keydown', function(e) {
+            if(e.key === 'Enter') doLogin();
+        });
+    </script>
+</body>
+</html>
